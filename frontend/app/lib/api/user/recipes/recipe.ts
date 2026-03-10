@@ -84,6 +84,9 @@ export type RecipeSearchQuery = {
   foods?: string[];
   requireAllFoods?: boolean;
 
+  tagGroups?: string[];
+  requireAllTagGroups?: boolean;
+
   page?: number;
   perPage?: number;
   orderBy?: string;

@@ -42,6 +42,7 @@ export interface TagBase {
   name: string;
   id: string;
   groupId?: string | null;
+  tagGroupId?: string | null;
   slug: string;
 }
 export interface CategoryIn {
@@ -119,6 +120,7 @@ export interface RecipeCategory {
 export interface RecipeTag {
   id?: string | null;
   groupId?: string | null;
+  tagGroupId?: string | null;
   name: string;
   slug: string;
   recipeCount?: number;
@@ -595,6 +597,7 @@ export interface SubstitutionBase {
 }
 export interface TagIn {
   name: string;
+  tagGroupId?: string | null;
 }
 export interface TagMerge {
   fromId: string;
@@ -603,9 +606,35 @@ export interface TagMerge {
 export interface TagOut {
   name: string;
   groupId: string;
+  tagGroupId?: string | null;
   id: string;
   slug: string;
   recipeCount?: number;
+}
+export interface TagGroupIn {
+  name: string;
+  color?: string | null;
+  position?: number;
+}
+export interface TagGroupOut {
+  name: string;
+  color?: string | null;
+  position: number;
+  id: string;
+  groupId: string;
+  slug: string;
+}
+export interface TagGroupSummary extends TagGroupOut {
+  tags: TagOut[];
+}
+export interface TagGroupPagination {
+  page: number;
+  perPage: number;
+  total: number;
+  totalPages: number;
+  items: TagGroupOut[];
+  next?: string | null;
+  previous?: string | null;
 }
 export interface TagSave {
   name: string;

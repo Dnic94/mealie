@@ -15,6 +15,7 @@ from mealie.db.models.recipe.category import Category
 from mealie.db.models.recipe.ingredient import RecipeIngredientModel, RecipeIngredientSubstitutionModel
 from mealie.db.models.recipe.recipe import RecipeModel
 from mealie.db.models.recipe.tag import Tag
+from mealie.db.models.recipe.tag_group import TagGroup
 from mealie.db.models.recipe.tool import Tool
 from mealie.db.models.users.user_to_recipe import UserToRecipe
 from mealie.db.models.users.users import User
@@ -254,12 +255,15 @@ class RepositoryRecipes(RecipeSuggestionMixin, HouseholdRepositoryGeneric[Recipe
                 )
             ).scalar_one_or_none()
             if existing:
-                return {
+                res = {
                     "id": str(existing.id),
                     "group_id": str(existing.group_id),
                     "name": existing.name,
                     "slug": existing.slug,
                 }
+                if hasattr(existing, "tag_group_id"):
+                    res["tag_group_id"] = str(existing.tag_group_id) if existing.tag_group_id else None
+                return res
 
             new_obj = model(session=self.session, name=normalized_name, group_id=self.group_id)
             self.session.add(new_obj)
@@ -271,12 +275,15 @@ class RepositoryRecipes(RecipeSuggestionMixin, HouseholdRepositoryGeneric[Recipe
                     raise
                 continue
 
-            return {
+            res = {
                 "id": str(new_obj.id),
                 "group_id": str(new_obj.group_id),
                 "name": new_obj.name,
                 "slug": new_obj.slug,
             }
+            if hasattr(new_obj, "tag_group_id"):
+                res["tag_group_id"] = str(new_obj.tag_group_id) if new_obj.tag_group_id else None
+            return res
 
         raise RuntimeError(f"Failed to resolve organizer '{name}' after {max_attempts} attempts")
 
@@ -316,14 +323,15 @@ class RepositoryRecipes(RecipeSuggestionMixin, HouseholdRepositoryGeneric[Recipe
                         ).scalar_one_or_none()
 
                 if existing:
-                    resolved.append(
-                        {
-                            "id": str(existing.id),
-                            "group_id": str(existing.group_id),
-                            "name": existing.name,
-                            "slug": existing.slug,
-                        }
-                    )
+                    item_dict = {
+                        "id": str(existing.id),
+                        "group_id": str(existing.group_id),
+                        "name": existing.name,
+                        "slug": existing.slug,
+                    }
+                    if hasattr(existing, "tag_group_id"):
+                        item_dict["tag_group_id"] = str(existing.tag_group_id) if existing.tag_group_id else None
+                    resolved.append(item_dict)
                 elif organizer.get("name"):
                     resolved.append(self._resolve_organizer(model, organizer["name"]))
             new_data[field] = resolved
@@ -342,10 +350,12 @@ class RepositoryRecipes(RecipeSuggestionMixin, HouseholdRepositoryGeneric[Recipe
         tools: list[UUID4 | str] | None = None,
         foods: list[UUID4 | str] | None = None,
         households: list[UUID4 | str] | None = None,
+        tag_groups: list[UUID4 | str] | None = None,
         require_all_categories=True,
         require_all_tags=True,
         require_all_tools=True,
         require_all_foods=True,
+        require_all_tag_groups=True,
         search: str | None = None,
     ) -> RecipePagination:
         # Copy this, because calling methods (e.g. tests) might rely on it not getting mutated
@@ -364,16 +374,19 @@ class RepositoryRecipes(RecipeSuggestionMixin, HouseholdRepositoryGeneric[Recipe
             tag_ids = self._uuids_for_items(tags, Tag)
             tool_ids = self._uuids_for_items(tools, Tool)
             household_ids = self._uuids_for_items(households, Household)
+            tag_group_ids = self._uuids_for_items(tag_groups, TagGroup)
             filters = self._build_recipe_filter(
                 categories=category_ids,
                 tags=tag_ids,
                 tools=tool_ids,
                 foods=foods,
                 households=household_ids,
+                tag_groups=tag_group_ids,
                 require_all_categories=require_all_categories,
                 require_all_tags=require_all_tags,
                 require_all_tools=require_all_tools,
                 require_all_foods=require_all_foods,
+                require_all_tag_groups=require_all_tag_groups,
             )
             q = q.filter(*filters)
         if search:
@@ -434,10 +447,12 @@ class RepositoryRecipes(RecipeSuggestionMixin, HouseholdRepositoryGeneric[Recipe
         tools: list[UUID4] | None = None,
         foods: list[UUID4] | None = None,
         households: list[UUID4] | None = None,
+        tag_groups: list[UUID4] | None = None,
         require_all_categories: bool = True,
         require_all_tags: bool = True,
         require_all_tools: bool = True,
         require_all_foods: bool = True,
+        require_all_tag_groups: bool = True,
     ) -> list:
         fltr: list[sa.ColumnElement] = []
         if self.group_id:
@@ -469,6 +484,13 @@ class RepositoryRecipes(RecipeSuggestionMixin, HouseholdRepositoryGeneric[Recipe
                 fltr.append(RecipeModel.recipe_ingredient.any(self._ingredient_uses_any_food(foods)))
         if households:
             fltr.append(RecipeModel.household_id.in_(households))
+
+        if tag_groups:
+            if require_all_tag_groups:
+                fltr.extend(RecipeModel.tags.any(Tag.tag_group_id == tg_id) for tg_id in tag_groups)
+            else:
+                fltr.append(RecipeModel.tags.any(Tag.tag_group_id.in_(tag_groups)))
+
         return fltr
 
     def get_random(self, limit=1) -> list[Recipe]:

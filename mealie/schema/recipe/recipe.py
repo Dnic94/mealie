@@ -66,6 +66,7 @@ class RecipeTag(MealieModel):
     name: str
     slug: str
     recipe_count: int = 0
+    tag_group_id: UUID4 | None = None
 
     _searchable_properties: ClassVar[list[str]] = ["name"]
     model_config = ConfigDict(from_attributes=True)
@@ -118,6 +119,7 @@ class RecipeTagIn(MealieModel):
     name: str
     slug: str | None = None
     recipe_count: int = 0
+    tag_group_id: UUID4 | None = None
 
     _searchable_properties: ClassVar[list[str]] = ["name"]
     model_config = ConfigDict(from_attributes=True)

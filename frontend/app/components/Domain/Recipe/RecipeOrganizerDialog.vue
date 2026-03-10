@@ -22,6 +22,16 @@
             v-model="onHand"
             :label="$t('tool.on-hand')"
           />
+          <v-select
+            v-if="itemType === Organizer.Tag"
+            v-model="selectedTagGroupId"
+            :items="tagGroupItems"
+            :label="$t('tag.tag-group')"
+            item-title="name"
+            item-value="id"
+            clearable
+            density="compact"
+          />
         </v-card-text>
       </v-form>
     </BaseDialog>
@@ -30,7 +40,7 @@
 
 <script setup lang="ts">
 import { useUserApi } from "~/composables/api";
-import { useCategoryStore, useTagStore, useToolStore } from "~/composables/store";
+import { useCategoryStore, useTagGroupStore, useTagStore, useToolStore } from "~/composables/store";
 import { type RecipeOrganizer, Organizer } from "~/lib/api/types/non-generated";
 
 const { $globals } = useNuxtApp();
@@ -58,11 +68,18 @@ const i18n = useI18n();
 
 const name = ref("");
 const onHand = ref(false);
+const selectedTagGroupId = ref<string | null>(null);
+
+const { store: tagGroupStore } = useTagGroupStore();
+const tagGroupItems = computed(() => tagGroupStore.value);
 
 watch(
   dialog,
   (val: boolean) => {
-    if (!val) name.value = "";
+    if (!val) {
+      name.value = "";
+      selectedTagGroupId.value = null;
+    }
   },
 );
 
@@ -112,7 +129,7 @@ const rules = {
 async function select() {
   if (store) {
     // @ts-expect-error the same state is used for different organizer types, which have different requirements
-    const newItem = await store.actions.createOne({ name: name.value, onHand: onHand.value });
+    const newItem = await store.actions.createOne({ name: name.value, onHand: onHand.value, tagGroupId: selectedTagGroupId.value });
     emit(CREATED_ITEM_EVENT, newItem);
   }
   dialog.value = false;
