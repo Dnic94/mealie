@@ -94,6 +94,7 @@ from .recipe_suggestion import (
     RecipeSuggestionResponseItem,
     RecipeSuggestionSubstitutedFood,
 )
+from .recipe_tag_group import TagGroupBase, TagGroupIn, TagGroupOut, TagGroupPagination, TagGroupSave, TagGroupSummary
 from .recipe_timeline_events import (
     RecipeTimelineEventCreate,
     RecipeTimelineEventIn,
@@ -103,7 +104,6 @@ from .recipe_timeline_events import (
     TimelineEventImage,
     TimelineEventType,
 )
-from .recipe_tag_group import TagGroupBase, TagGroupIn, TagGroupOut, TagGroupPagination, TagGroupSave, TagGroupSummary
 from .recipe_tool import RecipeToolCreate, RecipeToolMerge, RecipeToolOut, RecipeToolResponse, RecipeToolSave
 from .request_helpers import RecipeDuplicate, RecipeSlug, SlugResponse, UpdateImageResponse
 
