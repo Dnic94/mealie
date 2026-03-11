@@ -42,8 +42,8 @@ export interface TagBase {
   name: string;
   id: string;
   groupId?: string | null;
-  tagGroupId?: string | null;
   slug: string;
+  tagGroupId?: string | null;
 }
 export interface CategoryIn {
   name: string;
@@ -116,14 +116,15 @@ export interface RecipeCategory {
   name: string;
   slug: string;
   recipeCount?: number;
+  tagGroupId?: string | null;
 }
 export interface RecipeTag {
   id?: string | null;
   groupId?: string | null;
-  tagGroupId?: string | null;
   name: string;
   slug: string;
   recipeCount?: number;
+  tagGroupId?: string | null;
 }
 export interface CreateRecipeByUrlBulk {
   imports: CreateRecipeBulk[];
@@ -304,6 +305,7 @@ export interface RecipeTool {
   name: string;
   slug: string;
   recipeCount?: number;
+  tagGroupId?: string | null;
   householdsWithTool?: string[];
 }
 export interface RecipeStep {
@@ -466,6 +468,7 @@ export interface RecipeTagResponse {
   groupId?: string | null;
   slug: string;
   recipes?: RecipeSummary[];
+  tagGroupId?: string | null;
 }
 export interface RecipeTimelineEventCreate {
   recipeId: string;
@@ -595,21 +598,13 @@ export interface SubstitutionBase {
   substituteFoodId?: string | null;
   note?: string | null;
 }
-export interface TagIn {
+export interface TagGroupBase {
   name: string;
-  tagGroupId?: string | null;
-}
-export interface TagMerge {
-  fromId: string;
-  toId: string;
-}
-export interface TagOut {
-  name: string;
-  groupId: string;
-  tagGroupId?: string | null;
+  color?: string | null;
+  position?: number;
   id: string;
+  groupId?: string | null;
   slug: string;
-  recipeCount?: number;
 }
 export interface TagGroupIn {
   name: string;
@@ -619,13 +614,10 @@ export interface TagGroupIn {
 export interface TagGroupOut {
   name: string;
   color?: string | null;
-  position: number;
-  id: string;
+  position?: number;
   groupId: string;
+  id: string;
   slug: string;
-}
-export interface TagGroupSummary extends TagGroupOut {
-  tags: TagOut[];
 }
 export interface TagGroupPagination {
   page: number;
@@ -636,8 +628,40 @@ export interface TagGroupPagination {
   next?: string | null;
   previous?: string | null;
 }
+export interface TagGroupSave {
+  name: string;
+  color?: string | null;
+  position?: number;
+  groupId: string;
+}
+export interface TagGroupSummary {
+  name: string;
+  color?: string | null;
+  position?: number;
+  id: string;
+  groupId?: string | null;
+  slug: string;
+  tags?: TagOut[];
+}
+export interface TagMerge {
+  fromId: string;
+  toId: string;
+}
+export interface TagOut {
+  name: string;
+  tagGroupId?: string | null;
+  groupId: string;
+  id: string;
+  slug: string;
+  recipeCount?: number;
+}
+export interface TagIn {
+  name: string;
+  tagGroupId?: string | null;
+}
 export interface TagSave {
   name: string;
+  tagGroupId?: string | null;
   groupId: string;
 }
 export interface UnitFoodBase {
@@ -704,6 +728,7 @@ export interface RecipeTagIn {
   name: string;
   slug?: string | null;
   recipeCount?: number;
+  tagGroupId?: string | null;
 }
 export interface RecipeToolIn {
   id?: string | null;
