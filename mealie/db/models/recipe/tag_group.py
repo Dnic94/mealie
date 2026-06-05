@@ -5,7 +5,7 @@ import sqlalchemy.orm as orm
 from slugify import slugify
 from sqlalchemy.orm import Mapped, mapped_column, validates
 
-from mealie.db.models._model_base import BaseMixins, SqlAlchemyBase
+from mealie.db.models._model_base import BaseMixins, FilterableColumn, SqlAlchemyBase
 from mealie.db.models._model_utils.guid import GUID
 
 if TYPE_CHECKING:
@@ -19,10 +19,10 @@ class TagGroup(SqlAlchemyBase, BaseMixins):
 
     id: Mapped[GUID] = mapped_column(GUID, primary_key=True, default=GUID.generate)
     group_id: Mapped[GUID] = mapped_column(GUID, sa.ForeignKey("groups.id"), nullable=False, index=True)
-    name: Mapped[str] = mapped_column(sa.String, index=True, nullable=False)
-    slug: Mapped[str] = mapped_column(sa.String, index=True, nullable=False)
-    color: Mapped[str | None] = mapped_column(sa.String, nullable=True)
-    position: Mapped[int] = mapped_column(sa.Integer, default=0, nullable=False)
+    name: FilterableColumn[str] = mapped_column(sa.String, index=True, nullable=False)
+    slug: FilterableColumn[str] = mapped_column(sa.String, index=True, nullable=False)
+    color: FilterableColumn[str | None] = mapped_column(sa.String, nullable=True)
+    position: FilterableColumn[int] = mapped_column(sa.Integer, default=0, nullable=False)
 
     group: Mapped["Group"] = orm.relationship("Group", back_populates="tag_groups", foreign_keys=[group_id])
     tags: Mapped[list["Tag"]] = orm.relationship("Tag", back_populates="tag_group")
