@@ -5,12 +5,16 @@ import { usePublicExploreApi, useUserApi } from "~/composables/api";
 
 const store: Ref<TagGroupOut[]> = ref([]);
 const loading = ref(false);
+const initialized = ref(false);
 const publicLoading = ref(false);
+const publicInitialized = ref(false);
 
 export function resetTagGroupStore() {
   store.value = [];
   loading.value = false;
+  initialized.value = false;
   publicLoading.value = false;
+  publicInitialized.value = false;
 }
 
 export const useTagGroupData = function () {
@@ -26,10 +30,10 @@ export const useTagGroupData = function () {
 
 export const useTagGroupStore = function (i18n?: Composer) {
   const api = useUserApi(i18n);
-  return useStore<TagGroupOut>("tagGroup", store, loading, api.tagGroups);
+  return useStore<TagGroupOut>("tagGroup", store, loading, initialized, api.tagGroups);
 };
 
 export const usePublicTagGroupStore = function (groupSlug: string, i18n?: Composer) {
   const api = usePublicExploreApi(groupSlug, i18n).explore;
-  return useReadOnlyStore<TagGroupOut>("tagGroup", store, publicLoading, api.tagGroups);
+  return useReadOnlyStore<TagGroupOut>("tagGroup", store, publicLoading, publicInitialized, api.tagGroups);
 };
