@@ -5,6 +5,7 @@ from pydantic import UUID4
 
 from mealie.routes._base import BaseCrudController, controller
 from mealie.routes._base.mixins import HttpRepo
+from mealie.routes._base.permissions import Perm, require
 from mealie.schema import mapper
 from mealie.schema.recipe.recipe_tag_group import (
     TagGroupIn,
@@ -47,19 +48,19 @@ class TagGroupController(BaseCrudController):
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         return result
 
-    @router.post("", status_code=201, response_model=TagGroupOut)
+    @router.post("", status_code=201, response_model=TagGroupOut, dependencies=[require(Perm.GROUP_ORGANIZE)])
     def create_one(self, tag_group: TagGroupIn):
         """Creates a new Tag Group"""
         save_data = mapper.cast(tag_group, TagGroupSave, group_id=self.group_id)
         return self.repo.create(save_data)
 
-    @router.put("/{item_id}", response_model=TagGroupOut)
+    @router.put("/{item_id}", response_model=TagGroupOut, dependencies=[require(Perm.GROUP_ORGANIZE)])
     def update_one(self, item_id: UUID4, tag_group: TagGroupIn):
         """Updates an existing Tag Group"""
         save_data = mapper.cast(tag_group, TagGroupSave, group_id=self.group_id)
         return self.repo.update(item_id, save_data)
 
-    @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
+    @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT, dependencies=[require(Perm.GROUP_ORGANIZE)])
     def delete_one(self, item_id: UUID4):
         """
         Deletes a Tag Group. Tags that belong to the group will have their

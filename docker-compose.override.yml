@@ -1,6 +1,0 @@
-services:
-  mealie:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    image: mealie-custom:latest

@@ -291,6 +291,8 @@ export const icons = {
 
   // Organization
   tags: mdiTagMultipleOutline,
+  // Custom 24x24 MDI-style outline icon: folder container with a tag emblem inside
+  tagGroups: "M10,4L12,6H20A2,2 0 0,1 22,8V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4H10M4,8V18H20V8H4M7,10H13.5L17,13L13.5,16H7V10M9.5,12A1,1 0 0,0 8.5,13A1,1 0 0,0 9.5,14A1,1 0 0,0 10.5,13A1,1 0 0,0 9.5,12Z",
   tagArrowUp: mdiTagArrowUpOutline,
   tagArrowRight: mdiTagArrowRight,
   categories: mdiShapeOutline,

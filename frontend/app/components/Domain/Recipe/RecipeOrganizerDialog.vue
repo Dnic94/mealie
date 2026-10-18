@@ -27,6 +27,7 @@
             v-model="selectedTagGroupId"
             :items="tagGroupItems"
             :label="$t('tag.tag-group')"
+            :prepend-inner-icon="$globals.icons.tagGroups"
             item-title="name"
             item-value="id"
             clearable

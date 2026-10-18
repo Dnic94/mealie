@@ -20,7 +20,7 @@
     :items="tagGroups"
   >
     <v-icon start>
-      {{ $globals.icons.tags }}
+      {{ $globals.icons.tagGroups }}
     </v-icon>
     {{ $t("tag.tag-groups") }}
   </SearchFilter>

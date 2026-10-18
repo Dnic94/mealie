@@ -17,8 +17,8 @@ class TagGroup(SqlAlchemyBase, BaseMixins):
     __tablename__ = "tag_groups"
     __table_args__ = (sa.UniqueConstraint("slug", "group_id", name="tag_groups_slug_group_id_key"),)
 
-    id: Mapped[GUID] = mapped_column(GUID, primary_key=True, default=GUID.generate)
-    group_id: Mapped[GUID] = mapped_column(GUID, sa.ForeignKey("groups.id"), nullable=False, index=True)
+    id: FilterableColumn[GUID] = mapped_column(GUID, primary_key=True, default=GUID.generate)
+    group_id: FilterableColumn[GUID] = mapped_column(GUID, sa.ForeignKey("groups.id"), nullable=False, index=True)
     name: FilterableColumn[str] = mapped_column(sa.String, index=True, nullable=False)
     slug: FilterableColumn[str] = mapped_column(sa.String, index=True, nullable=False)
     color: FilterableColumn[str | None] = mapped_column(sa.String, nullable=True)

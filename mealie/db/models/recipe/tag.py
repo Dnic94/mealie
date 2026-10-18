@@ -62,7 +62,7 @@ class Tag(SqlAlchemyBase, BaseMixins):
 
     name: FilterableColumn[str] = mapped_column(sa.String, index=True, nullable=False)
     slug: FilterableColumn[str] = mapped_column(sa.String, index=True, nullable=False)
-    tag_group_id: Mapped[guid.GUID | None] = mapped_column(
+    tag_group_id: FilterableColumn[guid.GUID | None] = mapped_column(
         guid.GUID, sa.ForeignKey("tag_groups.id", ondelete="SET NULL"), nullable=True, index=True
     )
     tag_group: Mapped[TagGroup | None] = orm.relationship(
