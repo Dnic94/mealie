@@ -139,7 +139,7 @@
     </BaseDialog>
 
     <!-- Search -->
-    <v-row dense>
+    <v-row density="comfortable">
       <v-col>
         <v-text-field
           v-model="searchString"
@@ -154,10 +154,10 @@
     </v-row>
 
     <!-- Toolbar with two create buttons -->
-    <v-app-bar
+    <v-row
       color="transparent"
       flat
-      class="mt-n1 rounded align-center position-relative w-100 left-0 top-0"
+      class="mt-n1 mb-2 px-3 rounded align-center position-relative w-100 left-0 top-0"
     >
       <v-icon size="large" start>
         {{ $globals.icons.tags }}
@@ -178,7 +178,7 @@
         :text="$t('tag.tag')"
         @click="openCreateTagDialog()"
       />
-    </v-app-bar>
+    </v-row>
 
     <!-- Tag group sections -->
     <template v-for="group in visibleGroups" :key="group.id">
